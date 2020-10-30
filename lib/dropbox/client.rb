@@ -220,7 +220,7 @@ module Dropbox
     # @param [String] mode
     # @return [Array<Dropbox::Metadata>] matches
     def search(path, query, start=0, max_results=100, mode='filename')
-      resp = request('/files/search', path: path, query: query, start: start,
+      resp = request('/files/search_v2', path: path, query: query, start: start,
         max_results: max_results, mode: mode)
       matches = resp['matches'].map { |m| parse_tagged_response(m['metadata']) }
       return matches
@@ -335,6 +335,8 @@ module Dropbox
           nil
         when 'failed'
           resp['failed']['.tag']
+        when 'metadata'
+          parse_tagged_response(resp['metadata'])
         else
           raise ClientError.unknown_response_type(resp['.tag'])
         end
